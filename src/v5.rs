@@ -328,9 +328,9 @@ impl Socks5Listener {
 /// A SOCKS5 UDP client.
 #[derive(Debug)]
 pub struct Socks5Datagram {
-    socket: UdpSocket,
+    pub socket: UdpSocket,
     // keeps the session alive
-    stream: Socks5Stream,
+    pub stream: Socks5Stream,
 }
 
 impl Socks5Datagram {
