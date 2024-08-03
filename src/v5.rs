@@ -359,15 +359,19 @@ impl Socks5Datagram {
     {
         // we don't know what our IP is from the perspective of the proxy, so
         // don't try to pass `addr` in here.
-        let dst = TargetAddr::Ip(SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(0, 0, 0, 0), 0)));
+        
+        let socket = UdpSocket::bind(addr)?;
+
+        let sock_addr = socket.local_addr().unwrap();
+        let dst = TargetAddr::Ip(SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(0, 0, 0, 0), sock_addr.port())));
+        
         let stream = Socks5Stream::connect_raw(3, proxy, dst, auth)?;
 
-        let socket = UdpSocket::bind(addr)?;
         socket.connect(&stream.proxy_addr)?;
 
         Ok(Socks5Datagram {
-            socket: socket,
-            stream: stream,
+            socket,
+            stream,
         })
     }
 
