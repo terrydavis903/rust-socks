@@ -144,7 +144,9 @@ impl Socks5Stream {
         where T: ToSocketAddrs,
               U: ToTargetAddr
     {
-        let mut socket = TcpStream::connect(proxy)?;
+        let proxy_addr = proxy.to_socket_addrs().unwrap().next().unwrap();
+        let proxy_ip = proxy_addr.ip();
+        let mut socket = TcpStream::connect(proxy_addr)?;
 
         let target = target.to_target_addr()?;
 
@@ -189,10 +191,11 @@ impl Socks5Stream {
         socket.write_all(&packet[..len + 3])?;
 
         let proxy_addr = read_response(&mut socket)?;
+        let proxy_target = SocketAddr::new(proxy_ip, proxy_addr.to_socket_addrs().unwrap().next().unwrap().port()).to_target_addr().unwrap();
 
         Ok(Socks5Stream {
             socket: socket,
-            proxy_addr: proxy_addr,
+            proxy_addr: proxy_target,
         })
     }
 
