@@ -367,8 +367,8 @@ impl Socks5Datagram {
         
 
         let sock = Socket::new(Domain::IPV4, Type::DGRAM, None)?;
-        let sock_fd = sock.as_raw_fd();
-        let socket = sock_fd.bind(addr)?;
+        // let sock_fd = sock.as_raw_fd();
+        let socket = sock.bind(addr)?;
         // let socket = UdpSocket::bind(addr)?;
 
         let sock_addr = socket.local_addr().unwrap();
