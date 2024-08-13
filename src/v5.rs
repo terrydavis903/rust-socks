@@ -1,9 +1,10 @@
 use byteorder::{ReadBytesExt, WriteBytesExt, BigEndian};
+use socket2::{Domain, Socket, Type};
 use std::cmp;
 use std::io::{self, Read, Write};
-use std::net::{SocketAddr, ToSocketAddrs, SocketAddrV4, SocketAddrV6, TcpStream, Ipv4Addr,
-               Ipv6Addr, UdpSocket};
+use std::net::{SocketAddr, ToSocketAddrs, SocketAddrV4, SocketAddrV6, TcpStream, Ipv4Addr, Ipv6Addr, UdpSocket};
 use std::ptr;
+use std::os::unix::io::AsRawFd;
 
 use {ToTargetAddr, TargetAddr};
 use writev::WritevExt;
@@ -363,7 +364,12 @@ impl Socks5Datagram {
         // we don't know what our IP is from the perspective of the proxy, so
         // don't try to pass `addr` in here.
         
-        let socket = UdpSocket::bind(addr)?;
+        
+
+        let sock = Socket::new(Domain::IPV4, Type::DGRAM, None)?;
+        let sock_fd = sock.as_raw_fd();
+        let socket = sock_fd.bind(addr)?;
+        // let socket = UdpSocket::bind(addr)?;
 
         let sock_addr = socket.local_addr().unwrap();
         let dst = TargetAddr::Ip(SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(0, 0, 0, 0), sock_addr.port())));

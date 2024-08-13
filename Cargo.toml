@@ -10,6 +10,8 @@ readme = "README.md"
 
 [dependencies]
 byteorder = "1.0"
+nix = "0.26.4"
+socket2 = "0.5.5"
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"

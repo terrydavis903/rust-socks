@@ -8,6 +8,8 @@ extern crate libc;
 #[cfg(windows)]
 extern crate winapi;
 
+extern crate socket2;
+
 use std::io;
 use std::net::{Ipv4Addr, Ipv6Addr, SocketAddr, SocketAddrV4, SocketAddrV6, ToSocketAddrs};
 use std::vec;
