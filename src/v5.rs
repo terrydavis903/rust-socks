@@ -365,20 +365,19 @@ impl Socks5Datagram {
         // don't try to pass `addr` in here.
         
         
+        let udp_sock = UdpSocket::bind(addr)?;
 
-        let sock = Socket::new(Domain::IPV4, Type::DGRAM, None)?;
-        // let sock_fd = sock.as_raw_fd();
-        sock.bind(&SockAddr::from(addr.to_socket_addrs().unwrap().next().unwrap()))?;
-        // let socket = UdpSocket::bind(addr)?;
+        // let sock = Socket::new(Domain::IPV4, Type::DGRAM, None)?;
+        // sock.bind(&SockAddr::from(addr.to_socket_addrs().unwrap().next().unwrap()))?;
 
-        let udp_sock: UdpSocket = sock.into();
+        // let udp_sock: UdpSocket = sock.into();
         let sock_addr = udp_sock.local_addr().unwrap();
         
         let dst = TargetAddr::Ip(SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(0, 0, 0, 0), sock_addr.port())));
         
         let stream = Socks5Stream::connect_raw(3, proxy, dst, auth)?;
 
-        udp_sock.connect(&stream.proxy_addr)?;
+        // udp_sock.connect(&stream.proxy_addr)?;
 
         Ok(Socks5Datagram {
             socket: udp_sock,
