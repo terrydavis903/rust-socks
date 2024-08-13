@@ -1,5 +1,5 @@
 use byteorder::{ReadBytesExt, WriteBytesExt, BigEndian};
-use socket2::{Domain, Socket, Type};
+use socket2::{Domain, SockAddr, Socket, Type};
 use std::cmp;
 use std::io::{self, Read, Write};
 use std::net::{SocketAddr, ToSocketAddrs, SocketAddrV4, SocketAddrV6, TcpStream, Ipv4Addr, Ipv6Addr, UdpSocket};
@@ -368,18 +368,20 @@ impl Socks5Datagram {
 
         let sock = Socket::new(Domain::IPV4, Type::DGRAM, None)?;
         // let sock_fd = sock.as_raw_fd();
-        let socket = sock.bind(addr)?;
+        sock.bind(&SockAddr::from(addr.to_socket_addrs().unwrap().next().unwrap()))?;
         // let socket = UdpSocket::bind(addr)?;
 
-        let sock_addr = socket.local_addr().unwrap();
+        let udp_sock: UdpSocket = sock.into();
+        let sock_addr = udp_sock.local_addr().unwrap();
+        
         let dst = TargetAddr::Ip(SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(0, 0, 0, 0), sock_addr.port())));
         
         let stream = Socks5Stream::connect_raw(3, proxy, dst, auth)?;
 
-        socket.connect(&stream.proxy_addr)?;
+        udp_sock.connect(&stream.proxy_addr)?;
 
         Ok(Socks5Datagram {
-            socket,
+            socket: udp_sock,
             stream,
         })
     }
