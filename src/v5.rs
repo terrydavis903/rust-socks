@@ -118,8 +118,8 @@ impl<'a> Authentication<'a> {
 /// A SOCKS5 client.
 #[derive(Debug)]
 pub struct Socks5Stream {
-    socket: TcpStream,
-    proxy_addr: TargetAddr,
+    pub socket: TcpStream,
+    pub proxy_addr: TargetAddr,
 }
 
 impl Socks5Stream {
