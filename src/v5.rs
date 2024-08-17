@@ -4,7 +4,7 @@ use std::cmp;
 use std::io::{self, Read, Write};
 use std::net::{SocketAddr, ToSocketAddrs, SocketAddrV4, SocketAddrV6, TcpStream, Ipv4Addr, Ipv6Addr, UdpSocket};
 use std::ptr;
-use std::os::unix::io::AsRawFd;
+// use std::os::unix::io::AsRawFd;
 
 use {ToTargetAddr, TargetAddr};
 use writev::WritevExt;
