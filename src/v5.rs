@@ -200,15 +200,7 @@ impl Socks5Stream {
         })
     }
 
-    fn connect_only_tcp<T>(proxy: T) -> io::Result<TcpStream>
-        where T: ToSocketAddrs
-    {
-        let proxy_addr = proxy.to_socket_addrs().unwrap().next().unwrap();
-        let socket = TcpStream::connect(proxy_addr)?;
-
-
-        Ok(socket)
-    }
+    
 
     fn password_authentication(socket: &mut TcpStream, username: &str, password: &str) -> io::Result<()> {
         if username.len() < 1 || username.len() > 255 {
