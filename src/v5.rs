@@ -38,7 +38,7 @@ fn read_addr<R: Read>(socket: &mut R) -> io::Result<TargetAddr> {
     }
 }
 
-fn read_response(socket: &mut TcpStream) -> io::Result<TargetAddr> {
+pub fn read_response(socket: &mut TcpStream) -> io::Result<TargetAddr> {
 
     if socket.read_u8()? != 5 {
         return Err(io::Error::new(io::ErrorKind::InvalidData, "invalid response version"));
@@ -64,7 +64,7 @@ fn read_response(socket: &mut TcpStream) -> io::Result<TargetAddr> {
     read_addr(socket)
 }
 
-fn write_addr(mut packet: &mut [u8], target: &TargetAddr) -> io::Result<usize> {
+pub fn write_addr(mut packet: &mut [u8], target: &TargetAddr) -> io::Result<usize> {
     let start_len = packet.len();
     match *target {
         TargetAddr::Ip(SocketAddr::V4(addr)) => {
@@ -198,6 +198,16 @@ impl Socks5Stream {
             socket: socket,
             proxy_addr: proxy_target,
         })
+    }
+
+    fn connect_only_tcp<T>(proxy: T) -> io::Result<TcpStream>
+        where T: ToSocketAddrs
+    {
+        let proxy_addr = proxy.to_socket_addrs().unwrap().next().unwrap();
+        let socket = TcpStream::connect(proxy_addr)?;
+
+
+        Ok(socket)
     }
 
     fn password_authentication(socket: &mut TcpStream, username: &str, password: &str) -> io::Result<()> {
@@ -357,7 +367,7 @@ impl Socks5Datagram {
         Self::bind_internal(proxy, addr, &auth)
     }
 
-    fn bind_internal<T, U>(proxy: T, addr: U, auth: &Authentication) -> io::Result<Socks5Datagram>
+    pub fn bind_internal<T, U>(proxy: T, addr: U, auth: &Authentication) -> io::Result<Socks5Datagram>
         where T: ToSocketAddrs,
               U: ToSocketAddrs
     {
@@ -384,6 +394,8 @@ impl Socks5Datagram {
             stream,
         })
     }
+
+    
 
     /// Like `UdpSocket::send_to`.
     ///
