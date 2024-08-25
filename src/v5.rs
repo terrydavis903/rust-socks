@@ -11,7 +11,7 @@ use writev::WritevExt;
 
 const MAX_ADDR_LEN: usize = 260;
 
-fn read_addr<R: Read>(socket: &mut R) -> io::Result<TargetAddr> {
+pub fn read_addr<R: Read>(socket: &mut R) -> io::Result<TargetAddr> {
     match socket.read_u8()? {
         1 => {
             let ip = Ipv4Addr::from(socket.read_u32::<BigEndian>()?);

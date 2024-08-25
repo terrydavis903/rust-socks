@@ -17,9 +17,9 @@ use std::vec;
 pub use v4::{Socks4Stream, Socks4Listener};
 pub use v5::{Socks5Stream, Socks5Listener, Socks5Datagram};
 
-mod v4;
-mod v5;
-mod writev;
+pub mod v4;
+pub mod v5;
+pub mod writev;
 
 /// A description of a connection target.
 #[derive(Debug, Clone)]
