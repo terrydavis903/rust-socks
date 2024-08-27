@@ -40,8 +40,9 @@ pub fn read_addr<R: Read>(socket: &mut R) -> io::Result<TargetAddr> {
 
 pub fn read_response(socket: &mut TcpStream) -> io::Result<TargetAddr> {
 
-    if socket.read_u8()? != 5 {
-        return Err(io::Error::new(io::ErrorKind::InvalidData, "invalid response version"));
+    let socket_version = socket.read_u8()?;
+    if socket_version != 5 {
+        return Err(io::Error::new(io::ErrorKind::InvalidData, format!("invalid response version: {}", socket_version)));
     }
 
     match socket.read_u8()? {
